@@ -4,7 +4,7 @@
 #
 Name     : double-conversion
 Version  : 2.0.1
-Release  : 11
+Release  : 12
 URL      : https://github.com/floitsch/double-conversion/archive/v2.0.1.tar.gz
 Source0  : https://github.com/floitsch/double-conversion/archive/v2.0.1.tar.gz
 Summary  : No detailed summary available

@@ -4,12 +4,13 @@
 #
 Name     : double-conversion
 Version  : 2.0.1
-Release  : 16
+Release  : 17
 URL      : https://github.com/floitsch/double-conversion/archive/v2.0.1.tar.gz
 Source0  : https://github.com/floitsch/double-conversion/archive/v2.0.1.tar.gz
 Summary  : No detailed summary available
 Group    : Development/Tools
 License  : BSD-3-Clause
+Requires: double-conversion-lib
 BuildRequires : cmake
 BuildRequires : python-dev
 BuildRequires : scons
@@ -22,28 +23,45 @@ routines for IEEE doubles.
 %package dev
 Summary: dev components for the double-conversion package.
 Group: Development
+Requires: double-conversion-lib
+Provides: double-conversion-devel
 
 %description dev
 dev components for the double-conversion package.
+
+
+%package lib
+Summary: lib components for the double-conversion package.
+Group: Libraries
+
+%description lib
+lib components for the double-conversion package.
 
 
 %prep
 %setup -q -n double-conversion-2.0.1
 
 %build
+export http_proxy=http://127.0.0.1:9/
+export https_proxy=http://127.0.0.1:9/
+export no_proxy=localhost,127.0.0.1,0.0.0.0
+export LANG=C
+export SOURCE_DATE_EPOCH=1523212643
 mkdir clr-build
 pushd clr-build
-cmake .. -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_SHARED_LIBS:BOOL=ON -DLIB_INSTALL_DIR:PATH=%{_libdir} -DBUILD_SHARED_LIBS:BOOL=ON -DINSTALL_LIB_DIR=/usr/lib64
-make V=1  %{?_smp_mflags}
+cmake .. -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_SHARED_LIBS:BOOL=ON -DLIB_INSTALL_DIR:PATH=/usr/lib64 -DCMAKE_AR=/usr/bin/gcc-ar -DLIB_SUFFIX=64 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_RANLIB=/usr/bin/gcc-ranlib -DBUILD_SHARED_LIBS:BOOL=ON -DINSTALL_LIB_DIR=/usr/lib64
+make  %{?_smp_mflags}
 popd
 
 %check
+export LANG=C
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
-export no_proxy=localhost
+export no_proxy=localhost,127.0.0.1,0.0.0.0
 pushd clr-build ; make test ||: ; popd
 
 %install
+export SOURCE_DATE_EPOCH=1523212643
 rm -rf %{buildroot}
 pushd clr-build
 %make_install
@@ -56,7 +74,7 @@ mv %{buildroot}/usr/lib64/lib/* %{buildroot}/usr/lib64
 %defattr(-,root,root,-)
 /usr/lib/CMake/double-conversion/double-conversionConfig.cmake
 /usr/lib/CMake/double-conversion/double-conversionConfigVersion.cmake
-/usr/lib/CMake/double-conversion/double-conversionLibraryDepends-noconfig.cmake
+/usr/lib/CMake/double-conversion/double-conversionLibraryDepends-relwithdebinfo.cmake
 /usr/lib/CMake/double-conversion/double-conversionLibraryDepends.cmake
 
 %files dev
@@ -70,4 +88,7 @@ mv %{buildroot}/usr/lib64/lib/* %{buildroot}/usr/lib64
 /usr/include/double-conversion/ieee.h
 /usr/include/double-conversion/strtod.h
 /usr/include/double-conversion/utils.h
-/usr/lib64/*.so
+
+%files lib
+%defattr(-,root,root,-)
+/usr/lib64/libdouble-conversion.so

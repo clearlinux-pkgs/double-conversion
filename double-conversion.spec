@@ -12,7 +12,7 @@ Group    : Development/Tools
 License  : BSD-3-Clause
 Requires: double-conversion-lib
 BuildRequires : cmake
-BuildRequires : python-dev
+
 BuildRequires : scons
 
 %description

@@ -4,7 +4,7 @@
 #
 Name     : double-conversion
 Version  : 3.1.0
-Release  : 21
+Release  : 22
 URL      : https://github.com/google/double-conversion/archive/3.1.0.tar.gz
 Source0  : https://github.com/google/double-conversion/archive/3.1.0.tar.gz
 Summary  : No detailed summary available
@@ -14,6 +14,8 @@ Requires: double-conversion-lib
 Requires: double-conversion-license
 BuildRequires : buildreq-cmake
 BuildRequires : buildreq-scons
+Patch1: 0001-Change-CMake-build-to-use-the-same-SONAME-as-the-Sco.patch
+Patch2: 0002-Use-GNUInstallDirs-to-install-files-in-the-expected-.patch
 
 %description
 https://github.com/google/double-conversion
@@ -49,13 +51,15 @@ license components for the double-conversion package.
 
 %prep
 %setup -q -n double-conversion-3.1.0
+%patch1 -p1
+%patch2 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1536637251
+export SOURCE_DATE_EPOCH=1536690877
 mkdir -p clr-build
 pushd clr-build
 %cmake .. -DBUILD_SHARED_LIBS:BOOL=ON -DINSTALL_LIB_DIR=/usr/lib64
@@ -70,7 +74,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build; make test || :
 
 %install
-export SOURCE_DATE_EPOCH=1536637251
+export SOURCE_DATE_EPOCH=1536690877
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/doc/double-conversion
 cp COPYING %{buildroot}/usr/share/doc/double-conversion/COPYING
@@ -93,15 +97,16 @@ popd
 /usr/include/double-conversion/ieee.h
 /usr/include/double-conversion/strtod.h
 /usr/include/double-conversion/utils.h
-/usr/lib/cmake/double-conversion/double-conversionConfig.cmake
-/usr/lib/cmake/double-conversion/double-conversionConfigVersion.cmake
-/usr/lib/cmake/double-conversion/double-conversionTargets-relwithdebinfo.cmake
-/usr/lib/cmake/double-conversion/double-conversionTargets.cmake
+/usr/lib64/cmake/double-conversion/double-conversionConfig.cmake
+/usr/lib64/cmake/double-conversion/double-conversionConfigVersion.cmake
+/usr/lib64/cmake/double-conversion/double-conversionTargets-relwithdebinfo.cmake
+/usr/lib64/cmake/double-conversion/double-conversionTargets.cmake
+/usr/lib64/libdouble-conversion.so
 
 %files lib
 %defattr(-,root,root,-)
-/usr/lib/libdouble-conversion.so
-/usr/lib/libdouble-conversion.so.3.0.0
+/usr/lib64/libdouble-conversion.so.1
+/usr/lib64/libdouble-conversion.so.1.0.0
 
 %files license
 %defattr(-,root,root,-)

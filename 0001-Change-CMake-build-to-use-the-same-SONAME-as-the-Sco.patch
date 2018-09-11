@@ -1,0 +1,29 @@
+From 9fc03c8e9295ae77ef280057ce171aba430482ab Mon Sep 17 00:00:00 2001
+From: Thiago Macieira <thiago.macieira@intel.com>
+Date: Tue, 11 Sep 2018 10:26:36 -0700
+Subject: [PATCH 1/2] Change CMake build to use the same SONAME as the Scons
+ build
+
+Commit e13e72e1 changed it to "libdouble-conversion.so.3.0.0".
+
+Fixes #77.
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 143c458..9e5203e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -27,7 +27,7 @@ target_include_directories(
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+ 
+ # pick a version #
+-set_property(TARGET double-conversion PROPERTY SOVERSION ${PROJECT_VERSION})
++set_target_properties(double-conversion PROPERTIES VERSION 1.0.0 SOVERSION 1)
+ 
+ # set up testing if requested
+ option(BUILD_TESTING "Build test programs" OFF)
+-- 
+2.18.0
+

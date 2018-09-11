@@ -1,0 +1,58 @@
+From 780b046edc2e470ec00dc796119e1eb5ff02be1d Mon Sep 17 00:00:00 2001
+From: Thiago Macieira <thiago.macieira@intel.com>
+Date: Tue, 11 Sep 2018 11:16:24 -0700
+Subject: [PATCH 2/2] Use GNUInstallDirs to install files in the expected dirs
+
+---
+ CMakeLists.txt | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9e5203e..f9e8062 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,6 +1,8 @@
+ cmake_minimum_required(VERSION 3.0)
+ project(double-conversion VERSION 3.0.0)
+ 
++include(GNUInstallDirs)
++
+ set(headers
+     double-conversion/bignum.h
+     double-conversion/cached-powers.h
+@@ -44,8 +46,7 @@ endif()
+ #   * <prefix>/lib/cmake/<PROJECT-NAME>
+ #   * <prefix>/lib/
+ #   * <prefix>/include/
+-set(config_install_dir "lib/cmake/${PROJECT_NAME}")
+-set(include_install_dir "include")
++set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+ 
+ set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+ 
+@@ -81,17 +82,17 @@ configure_package_config_file(
+ install(
+     TARGETS double-conversion
+     EXPORT "${targets_export_name}"
+-    LIBRARY DESTINATION "lib"
+-    ARCHIVE DESTINATION "lib"
+-    RUNTIME DESTINATION "bin"
+-    INCLUDES DESTINATION "${include_install_dir}"
++    ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR}
++    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+ )
+ 
+ # Headers:
+ #   * double-conversion/*.h -> <prefix>/include/double-conversion/*.h
+ install(
+     FILES ${headers}
+-    DESTINATION "${include_install_dir}/double-conversion"
++    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/double-conversion"
+ )
+ 
+ # Config
+-- 
+2.18.0
+

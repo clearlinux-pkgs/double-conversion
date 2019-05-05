@@ -4,7 +4,7 @@
 #
 Name     : double-conversion
 Version  : 3.1.4
-Release  : 24
+Release  : 25
 URL      : https://github.com/google/double-conversion/archive/v3.1.4/double-conversion-3.1.4.tar.gz
 Source0  : https://github.com/google/double-conversion/archive/v3.1.4/double-conversion-3.1.4.tar.gz
 Summary  : Binary-decimal and decimal-binary routines for IEEE doubles
@@ -52,13 +52,16 @@ license components for the double-conversion package.
 %prep
 %setup -q -n double-conversion-3.1.4
 %patch1 -p1
+pushd ..
+cp -a double-conversion-3.1.4 buildavx2
+popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1557076788
+export SOURCE_DATE_EPOCH=1557077271
 mkdir -p clr-build
 pushd clr-build
 export AR=gcc-ar
@@ -71,6 +74,20 @@ export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 %cmake .. -DBUILD_SHARED_LIBS:BOOL=ON -DINSTALL_LIB_DIR=/usr/lib64
 make  %{?_smp_mflags}
 popd
+mkdir -p clr-build-avx2
+pushd clr-build-avx2
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 -march=haswell "
+export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 -march=haswell "
+export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 -march=haswell "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 -march=haswell "
+export CFLAGS="$CFLAGS -march=haswell -m64"
+export CXXFLAGS="$CXXFLAGS -march=haswell -m64"
+%cmake .. -DBUILD_SHARED_LIBS:BOOL=ON -DINSTALL_LIB_DIR=/usr/lib64
+make  %{?_smp_mflags}
+popd
 
 %check
 export LANG=C
@@ -78,13 +95,18 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 cd clr-build; make test || :
+cd ../clr-build-avx2;
+make test || : || :
 
 %install
-export SOURCE_DATE_EPOCH=1557076788
+export SOURCE_DATE_EPOCH=1557077271
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/double-conversion
 cp COPYING %{buildroot}/usr/share/package-licenses/double-conversion/COPYING
 cp LICENSE %{buildroot}/usr/share/package-licenses/double-conversion/LICENSE
+pushd clr-build-avx2
+%make_install_avx2  || :
+popd
 pushd clr-build
 %make_install
 popd
@@ -107,10 +129,13 @@ popd
 /usr/lib64/cmake/double-conversion/double-conversionConfigVersion.cmake
 /usr/lib64/cmake/double-conversion/double-conversionTargets-relwithdebinfo.cmake
 /usr/lib64/cmake/double-conversion/double-conversionTargets.cmake
+/usr/lib64/haswell/libdouble-conversion.so
 /usr/lib64/libdouble-conversion.so
 
 %files lib
 %defattr(-,root,root,-)
+/usr/lib64/haswell/libdouble-conversion.so.3
+/usr/lib64/haswell/libdouble-conversion.so.3.1.4
 /usr/lib64/libdouble-conversion.so.3
 /usr/lib64/libdouble-conversion.so.3.1.4
 

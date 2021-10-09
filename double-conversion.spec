@@ -4,12 +4,13 @@
 #
 Name     : double-conversion
 Version  : 3.1.5
-Release  : 26
+Release  : 27
 URL      : https://github.com/google/double-conversion/archive/v3.1.5/double-conversion-3.1.5.tar.gz
 Source0  : https://github.com/google/double-conversion/archive/v3.1.5/double-conversion-3.1.5.tar.gz
 Summary  : No detailed summary available
 Group    : Development/Tools
 License  : BSD-3-Clause
+Requires: double-conversion-filemap = %{version}-%{release}
 Requires: double-conversion-lib = %{version}-%{release}
 Requires: double-conversion-license = %{version}-%{release}
 BuildRequires : buildreq-cmake
@@ -31,10 +32,19 @@ Requires: double-conversion = %{version}-%{release}
 dev components for the double-conversion package.
 
 
+%package filemap
+Summary: filemap components for the double-conversion package.
+Group: Default
+
+%description filemap
+filemap components for the double-conversion package.
+
+
 %package lib
 Summary: lib components for the double-conversion package.
 Group: Libraries
 Requires: double-conversion-license = %{version}-%{release}
+Requires: double-conversion-filemap = %{version}-%{release}
 
 %description lib
 lib components for the double-conversion package.
@@ -57,19 +67,19 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1579204529
+export SOURCE_DATE_EPOCH=1633742231
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=auto "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=auto "
 %cmake .. -DBUILD_SHARED_LIBS:BOOL=ON -DINSTALL_LIB_DIR=/usr/lib64
-make  %{?_smp_mflags}  VERBOSE=1
+make  %{?_smp_mflags}
 popd
 mkdir -p clr-build-avx2
 pushd clr-build-avx2
@@ -77,14 +87,16 @@ export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 -march=haswell "
-export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 -march=haswell "
-export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 -march=haswell "
-export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 -march=haswell "
-export CFLAGS="$CFLAGS -march=haswell -m64"
-export CXXFLAGS="$CXXFLAGS -march=haswell -m64"
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=auto -march=x86-64-v3 -mtune=skylake "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto -march=x86-64-v3 -mtune=skylake "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto -march=x86-64-v3 -mtune=skylake "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=auto -march=x86-64-v3 -mtune=skylake "
+export CFLAGS="$CFLAGS -march=x86-64-v3 -m64"
+export CXXFLAGS="$CXXFLAGS -march=x86-64-v3 -m64"
+export FFLAGS="$FFLAGS -march=x86-64-v3 -m64"
+export FCFLAGS="$FCFLAGS -march=x86-64-v3 -m64"
 %cmake .. -DBUILD_SHARED_LIBS:BOOL=ON -DINSTALL_LIB_DIR=/usr/lib64
-make  %{?_smp_mflags}  VERBOSE=1
+make  %{?_smp_mflags}
 popd
 
 %check
@@ -97,13 +109,14 @@ cd ../clr-build-avx2;
 make test || : || :
 
 %install
-export SOURCE_DATE_EPOCH=1579204529
+export SOURCE_DATE_EPOCH=1633742231
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/double-conversion
 cp %{_builddir}/double-conversion-3.1.5/COPYING %{buildroot}/usr/share/package-licenses/double-conversion/8d434c9c1704b544a8b0652efbc323380b67f9bc
 cp %{_builddir}/double-conversion-3.1.5/LICENSE %{buildroot}/usr/share/package-licenses/double-conversion/8d434c9c1704b544a8b0652efbc323380b67f9bc
 pushd clr-build-avx2
-%make_install_avx2  || :
+%make_install_v3  || :
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/share/clear/optimized-elf/ %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 popd
 pushd clr-build
 %make_install
@@ -127,15 +140,17 @@ popd
 /usr/lib64/cmake/double-conversion/double-conversionConfigVersion.cmake
 /usr/lib64/cmake/double-conversion/double-conversionTargets-relwithdebinfo.cmake
 /usr/lib64/cmake/double-conversion/double-conversionTargets.cmake
-/usr/lib64/haswell/libdouble-conversion.so
 /usr/lib64/libdouble-conversion.so
+
+%files filemap
+%defattr(-,root,root,-)
+/usr/share/clear/filemap/filemap-double-conversion
 
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/haswell/libdouble-conversion.so.3
-/usr/lib64/haswell/libdouble-conversion.so.3.1.5
 /usr/lib64/libdouble-conversion.so.3
 /usr/lib64/libdouble-conversion.so.3.1.5
+/usr/share/clear/optimized-elf/lib*
 
 %files license
 %defattr(0644,root,root,0755)

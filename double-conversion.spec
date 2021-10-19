@@ -4,7 +4,7 @@
 #
 Name     : double-conversion
 Version  : 3.1.5
-Release  : 28
+Release  : 29
 URL      : https://github.com/google/double-conversion/archive/v3.1.5/double-conversion-3.1.5.tar.gz
 Source0  : https://github.com/google/double-conversion/archive/v3.1.5/double-conversion-3.1.5.tar.gz
 Summary  : No detailed summary available
@@ -67,7 +67,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1633742231
+export SOURCE_DATE_EPOCH=1634680117
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -87,14 +87,14 @@ export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=auto -march=x86-64-v3 -mtune=skylake "
-export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto -march=x86-64-v3 -mtune=skylake "
-export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto -march=x86-64-v3 -mtune=skylake "
-export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=auto -march=x86-64-v3 -mtune=skylake "
-export CFLAGS="$CFLAGS -march=x86-64-v3 -m64"
-export CXXFLAGS="$CXXFLAGS -march=x86-64-v3 -m64"
-export FFLAGS="$FFLAGS -march=x86-64-v3 -m64"
-export FCFLAGS="$FCFLAGS -march=x86-64-v3 -m64"
+export CFLAGS="$CFLAGS -O3 -Wl,-z,x86-64-v3 -ffat-lto-objects -flto=auto -march=x86-64-v3 -mtune=skylake "
+export FCFLAGS="$FFLAGS -O3 -Wl,-z,x86-64-v3 -ffat-lto-objects -flto=auto -march=x86-64-v3 -mtune=skylake "
+export FFLAGS="$FFLAGS -O3 -Wl,-z,x86-64-v3 -ffat-lto-objects -flto=auto -march=x86-64-v3 -mtune=skylake "
+export CXXFLAGS="$CXXFLAGS -O3 -Wl,-z,x86-64-v3 -ffat-lto-objects -flto=auto -march=x86-64-v3 -mtune=skylake "
+export CFLAGS="$CFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
+export CXXFLAGS="$CXXFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
+export FFLAGS="$FFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
+export FCFLAGS="$FCFLAGS -march=x86-64-v3 -m64 -Wl,-z,x86-64-v3"
 %cmake .. -DBUILD_SHARED_LIBS:BOOL=ON -DINSTALL_LIB_DIR=/usr/lib64
 make  %{?_smp_mflags}
 popd
@@ -109,18 +109,18 @@ cd ../clr-build-avx2;
 make test || : || :
 
 %install
-export SOURCE_DATE_EPOCH=1633742231
+export SOURCE_DATE_EPOCH=1634680117
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/double-conversion
 cp %{_builddir}/double-conversion-3.1.5/COPYING %{buildroot}/usr/share/package-licenses/double-conversion/8d434c9c1704b544a8b0652efbc323380b67f9bc
 cp %{_builddir}/double-conversion-3.1.5/LICENSE %{buildroot}/usr/share/package-licenses/double-conversion/8d434c9c1704b544a8b0652efbc323380b67f9bc
 pushd clr-build-avx2
 %make_install_v3  || :
-/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/share/clear/optimized-elf/ %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 popd
 pushd clr-build
 %make_install
 popd
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/share/clear/optimized-elf/ %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)

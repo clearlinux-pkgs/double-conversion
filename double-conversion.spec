@@ -4,7 +4,7 @@
 #
 Name     : double-conversion
 Version  : 3.1.5
-Release  : 30
+Release  : 31
 URL      : https://github.com/google/double-conversion/archive/v3.1.5/double-conversion-3.1.5.tar.gz
 Source0  : https://github.com/google/double-conversion/archive/v3.1.5/double-conversion-3.1.5.tar.gz
 Summary  : No detailed summary available

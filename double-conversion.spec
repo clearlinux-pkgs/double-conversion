@@ -4,7 +4,7 @@
 #
 Name     : double-conversion
 Version  : 3.2.1
-Release  : 39
+Release  : 40
 URL      : https://github.com/google/double-conversion/archive/v3.2.1/double-conversion-3.2.1.tar.gz
 Source0  : https://github.com/google/double-conversion/archive/v3.2.1/double-conversion-3.2.1.tar.gz
 Summary  : No detailed summary available

@@ -5,7 +5,7 @@
 #
 Name     : double-conversion
 Version  : 3.3.0
-Release  : 43
+Release  : 44
 URL      : https://github.com/google/double-conversion/archive/v3.3.0/double-conversion-3.3.0.tar.gz
 Source0  : https://github.com/google/double-conversion/archive/v3.3.0/double-conversion-3.3.0.tar.gz
 Summary  : No detailed summary available
@@ -60,7 +60,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1684424229
+export SOURCE_DATE_EPOCH=1685497684
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -102,7 +102,7 @@ cd ../clr-build-avx2;
 make test || : || :
 
 %install
-export SOURCE_DATE_EPOCH=1684424229
+export SOURCE_DATE_EPOCH=1685497684
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/double-conversion
 cp %{_builddir}/double-conversion-%{version}/COPYING %{buildroot}/usr/share/package-licenses/double-conversion/8d434c9c1704b544a8b0652efbc323380b67f9bc || :
@@ -120,7 +120,6 @@ popd
 
 %files dev
 %defattr(-,root,root,-)
-/V3/usr/lib64/libdouble-conversion.so
 /usr/include/double-conversion/bignum.h
 /usr/include/double-conversion/cached-powers.h
 /usr/include/double-conversion/diy-fp.h
@@ -140,7 +139,6 @@ popd
 
 %files lib
 %defattr(-,root,root,-)
-/V3/usr/lib64/libdouble-conversion.so.3
 /V3/usr/lib64/libdouble-conversion.so.3.3.0
 /usr/lib64/libdouble-conversion.so.3
 /usr/lib64/libdouble-conversion.so.3.3.0
